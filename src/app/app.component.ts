@@ -112,7 +112,7 @@ export class AppComponent implements OnInit, AfterViewInit {
           localStream.addTrack(sender.track);
         });
         localAudio.srcObject = localStream;
-        localAudio.play();
+        // localAudio.play();
       });      
     }
 
