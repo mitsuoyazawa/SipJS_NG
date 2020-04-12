@@ -118,6 +118,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
       //   // Recieve call
       // });
 
+      // Needs More events https://sipjs.com/api/0.15.0/session/
       this.session.on('trackAdded', () => {
         this.onCall = true;;
         let pc = this.session.sessionDescriptionHandler.peerConnection;
@@ -129,7 +130,6 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
         console.log(`\n\n\nRemoteStream: ${remoteStream}\n\n\n`)
         remoteAudio.srcObject = remoteStream;
         remoteAudio.play();
-        this.callStatus = "On Call";
 
         // Gets local tracks
         var localStream = new MediaStream();
@@ -137,6 +137,7 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
           localStream.addTrack(sender.track);
         });
         localAudio.srcObject = localStream;
+        this.callStatus = "On Call";
         // localAudio.play();
       });
     }
@@ -145,6 +146,8 @@ export class AppComponent implements OnInit, AfterViewInit, OnDestroy {
   }
 
   HangUp() {
+    this.callStatus = 'None';
+    this.onCall = false;
     this.session.terminate();
   }
 
