@@ -1,9 +1,87 @@
-<audio #localAudio id="localAudio"></audio>
-<audio #remoteAudio id="remoteAudio" width="320" height="240" controls></audio>
-registered?
+<div class="jumbotron">
+  <h1 class="display-3">SipJS + Angular</h1>
+  <p class="lead">Example Angular with SipJS, Registring and logging in into pinyata server</p>
+</div>
+<div class="col-sm-12">
+  <div class="row">
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-header">
+          <h4>Register</h4>
+        </div>
+        <div class="card-body">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">URI</span>
+            </div>
+            <input [(ngModel)]="username" type="text" value="No" class="form-control">
+            <div class="input-group-prepend">
+              <span class="input-group-text">@</span>
+            </div>
+            <input [(ngModel)]="sipServer" type="text" value="No" class="form-control">
+          </div>
 
-<input id="state" type="text" value="No">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Password</span>
+            </div>
+            <input [(ngModel)]="regPassword" type="text" value="No" class="form-control">
+          </div>
 
-<!-- <input type="button" value="CALL Simple" (click)="SimpleCall()"> -->
-<input type="button" value="CALL" (click)="call()">
-<input type="button" value="HangUp" (click)="HangUp()">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">WS Server</span>
+            </div>
+            <input [(ngModel)]="wssServer" type="text" value="No" class="form-control">
+            <div class="input-group-prepend">
+              <span class="input-group-text">:</span>
+            </div>
+            <input [(ngModel)]="wssPort" type="number" value="No" class="form-control">
+          </div>
+        </div>
+        <div class="card-footer">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Registered?</span>
+            </div>
+            <input [(ngModel)]="state" type="text" class="form-control" disabled>
+            <input type="button" (click)="SipJs2()" class="btn btn-success" value="Register" [disabled]="registering">
+          </div>
+        </div>
+      </div>
+    </div>
+
+    <div class="col-sm-6">
+      <div class="card">
+        <div class="card-header">
+          Call
+        </div>
+        <div class="card-body">
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Call Id</span>
+            </div>
+            <input [(ngModel)]="callId" type="text" value="No" class="form-control">
+          </div>
+
+          <div class="input-group mb-3">
+            <div class="input-group-prepend">
+              <span class="input-group-text">Status</span>
+            </div>
+            <input [(ngModel)]="callStatus" type="text" value="No" class="form-control" disabled>
+          </div>
+          <audio #localAudio id="localAudio"></audio>
+          <audio #remoteAudio id="remoteAudio" width="320" height="240" controls></audio>
+        </div>
+        <div class="card-footer">
+          <input (click)="call()" type="button" value="Call" class="btn btn-success" [disabled]="!registered || onCall">
+          <input type="button" value="HangUp" (click)="HangUp()" class="btn btn-danger float-right"
+            [disabled]="!onCall">
+        </div>
+      </div>
+    </div>
+
+  </div>
+  <!-- <input type="button" value="CALL Simple" (click)="SimpleCall()"> -->
+
+</div>
