@@ -24,6 +24,7 @@ export class AppComponent implements OnInit, AfterViewInit {
 
   ua: SIP.UA;
   simple: SIP.Web.Simple;
+  session: any;
 
   constructor() { }
 
@@ -54,8 +55,6 @@ export class AppComponent implements OnInit, AfterViewInit {
   SipJs2() {
     /****************** SIPJS v2 ************************/
     var state = <HTMLInputElement>document.getElementById('state');
-    var remoteAudio = <HTMLAudioElement>document.getElementById('remoteAudio');
-    var localAudio = <HTMLAudioElement>document.getElementById('localAudio');
 
     this.ua = new SIP.UA(this.config);
 
@@ -69,15 +68,18 @@ export class AppComponent implements OnInit, AfterViewInit {
     });
     this.ua.on('accepted', function (e) {
       // Attach local stream to selfView
-      console.log("\n\n\n\naccepted\n\n\n\n");
+      // console.log("\n\n\n\naccepted\n\n\n\n");
     });
     this.ua.on('addstream', function (e) {
       // Attach remote stream to remoteView
-      console.log("\n\n\n\nadd stream\n\n\n")
+      // console.log("\n\n\n\nadd stream\n\n\n")
     });
   }
 
   call() {
+    var remoteAudio = <HTMLAudioElement>document.getElementById('remoteAudio');
+    var localAudio = <HTMLAudioElement>document.getElementById('localAudio');
+
     console.log("calling");
     if (this.ua.isRegistered()) {
       var options = {
@@ -88,12 +90,37 @@ export class AppComponent implements OnInit, AfterViewInit {
           }
         }
       };
-      this.ua.invite(this.callNum, options);
+      this.session = this.ua.invite(this.callNum, options);
       this.ua.on('invite', () => {
         console.log('\n\n\nINVITE BACK? WTF\n\n\n');
       });
+
+      this.session.on('trackAdded', () => {
+        let pc = this.session.sessionDescriptionHandler.peerConnection;
+
+        var remoteStream = new MediaStream();
+        pc.getReceivers().forEach(receiver => {
+          remoteStream.addTrack(receiver.track);
+        });
+        console.log(`\n\n\nRemoteStream: ${remoteStream}\n\n\n`)
+        remoteAudio.srcObject = remoteStream;
+        remoteAudio.play();
+  
+        // Gets local tracks
+        var localStream = new MediaStream();
+        pc.getSenders().forEach(sender => {
+          localStream.addTrack(sender.track);
+        });
+        localAudio.srcObject = localStream;
+        localAudio.play();
+      });      
     }
-    console.log('\n\n\n\asdfasdfasdf\n\n\n', this.ua);
+
+    // console.log('\n\n\n\asdfasdfasdf\n\n\n', this.ua);
+  }
+
+  HangUp() {
+    this.session.terminate();
   }
 
   Simple() {
